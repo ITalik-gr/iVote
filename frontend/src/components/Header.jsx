@@ -1,18 +1,14 @@
 import React from 'react';
-import { ConnectButton } from 'web3-ui';
-import { useWeb3React } from '@web3-react/core';
+import {ConnectButton} from 'web3uikit'
 
 export function Header() {
-  const { active, account, activate } = useWeb3React();
-  const handleConnect = () => {
-    activate(injectedConnector);
-  };
+
 
   return(
     <>
       <header class="w-full mt-5 text-gray-700 bg-white body-font">
           <div class="container flex flex-col items-start justify-between p-6 mx-auto md:flex-row">
-              <a class="flex items-center mb-4 font-medium text-gray-900 title-font md:mb-0">
+              <a href='#_' class="flex items-center mb-4 font-medium text-gray-900 title-font md:mb-0">
                   <svg class="w-auto h-5 text-gray-900 fill-current" viewBox="0 0 202 69"
                       xmlns="http://www.w3.org/2000/svg">
                       <path
@@ -25,10 +21,8 @@ export function Header() {
                   <a href="#_" class="font-medium hover:text-gray-900">Contact</a>
               </nav>
               <div class="items-center h-full">
-              <ConnectButton
-                onClick={handleConnect}
-                // Додайте інші необхідні props
-              />
+                {/* <button>Connect!</button> */}
+                <ConnectButton moralisAuth={false} />
               </div>
           </div>
       </header>

@@ -1,12 +1,15 @@
 import { Header } from "./components/Header";
-// import { MoralisProvider } from "react-moralis";
-// import { NotificationProvider } from "web3uikit";
+import { MoralisProvider } from "react-moralis";
 
 function App() {
   return (
-          <div className="App">
-            <Header /> 
-          </div>
+    <MoralisProvider initializeOnMount={false}>
+      <div className="App">
+        <Header /> 
+      </div>
+    </MoralisProvider>
+          
+          
   );
 }
 
