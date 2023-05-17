@@ -1,44 +1,122 @@
-require("@nomicfoundation/hardhat-toolbox");
-require('dotenv').config();
+require("hardhat-deploy")
+require("hardhat-gas-reporter")
+require("dotenv").config()
+
+/**
+ * @type import('hardhat/config').HardhatUserConfig
+ */
+
+const MAINNET_RPC_URL =
+    process.env.MAINNET_RPC_URL ||
+    process.env.ALCHEMY_MAINNET_RPC_URL ||
+    "https://eth-mainnet.alchemyapi.io/v2/your-api-key"
+
+const SEPOLIA_RPC_URL =
+    process.env.SEPOLIA_RPC_URL || "https://eth-sepolia.g.alchemy.com/v2/YOUR-API-KEY"
+
+const POLYGON_MAINNET_RPC_URL =
+    process.env.POLYGON_MAINNET_RPC_URL || "https://polygon-mainnet.alchemyapi.io/v2/your-api-key"
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "0x"
+
+
+// Your API key for Etherscan, obtain one at https://etherscan.io/
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "Your etherscan API key"
+const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY || "Your polygonscan API key"
+const REPORT_GAS = process.env.REPORT_GAS || false
 
 module.exports = {
-  defaultNetwork: "hardhat",
-  networks: {
-    localhost: {
-      chainId: 31337,
+    defaultNetwork: "hardhat",
+    networks: {
+        hardhat: {
+            chainId: 31337,
+        },
+        localhost: {
+            chainId: 31337,
+        },
+        sepolia: {
+            url: SEPOLIA_RPC_URL,
+            accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
+            //   accounts: {
+            //     mnemonic: MNEMONIC,
+            //   },
+            saveDeployments: true,
+            chainId: 11155111,
+        },
+        mainnet: {
+            url: MAINNET_RPC_URL,
+            accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
+            //   accounts: {
+            //     mnemonic: MNEMONIC,
+            //   },
+            saveDeployments: true,
+            chainId: 1,
+        },
+        polygon: {
+            url: POLYGON_MAINNET_RPC_URL,
+            accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
+            saveDeployments: true,
+            chainId: 137,
+        },
     },
-  },
+    // etherscan: {
+    //     // yarn hardhat verify --network <NETWORK> <CONTRACT_ADDRESS> <CONSTRUCTOR_PARAMETERS>
+    //     apiKey: {
+    //         sepolia: ETHERSCAN_API_KEY,
+    //         polygon: POLYGONSCAN_API_KEY,
+    //     },
+    //     customChains: [
+    //         {
+    //             network: "goerli",
+    //             chainId: 5,
+    //             urls: {
+    //                 apiURL: "https://api-goerli.etherscan.io/api",
+    //                 browserURL: "https://goerli.etherscan.io",
+    //             },
+    //         },
+    //     ],
+    // },
+    gasReporter: {
+        enabled: REPORT_GAS,
+        currency: "USD",
+        outputFile: "gas-report.txt",
+        noColors: true,
+        // coinmarketcap: process.env.COINMARKETCAP_API_KEY,
+    },
+    // contractSizer: {
+    //     runOnCompile: false,
+    //     only: ["Raffle"],
+    // },
+    namedAccounts: {
+        deployer: {
+            default: 0, // here this will by default take the first account as deployer
+            1: 0, // similarly on mainnet it will take the first account as deployer. Note though that depending on how hardhat network are configured, the account 0 on one network can be different than on another
+        },
+        user1: {
+            default: 1,
+        },
+        user2: {
+          default: 2,
+        },
+        user3: {
+          default: 3,
+        },
+        user4: {
+          default: 4,
+        },
 
-  // namedAccounts: {
-  //   deployer: {
-  //     default: 0, // Вказати індекс вашого адресу розгортання контракту
-  //   },
-  // },
-  paths: {
-    // Шляхи до контрактів та дефініцій контрактів
-    // sources: './contracts',
-    // deployments: './deployments',
-    // imports: './imports',
-  },
-  // Додайте розширення hardhat-deploy та hardhat-deploy-ethers
-  // для автоматичного розгортання контрактів та збереження дефініцій контрактів
-  // з адресами та ABI.
-  solidity: {
-    version: '0.8.9',
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200,
-      },
     },
-  },
-  // Розширення hardhat-deploy та hardhat-deploy-ethers
-  // для автоматичного розгортання контрактів та збереження дефініцій контрактів
-  // з адресами та ABI.
-  // paths: {
-  //   artifacts: './src/artifacts',
-  // },
-  // dotenv: {
-  //   path: '.env',
-  // },
-};
+    solidity: {
+        compilers: [
+            {
+                version: "0.8.7",
+            },
+            {
+                version: "0.4.24",
+            },
+        ],
+    },
+    // mocha: {
+    //     timeout: 500000, // 500 seconds max for running tests
+    // },
+}
