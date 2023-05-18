@@ -1,0 +1,75 @@
+
+.vote {
+  padding-top: 60px;
+  &-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  &-body {
+    &__title {
+      text-align: center;
+      font-weight: bold;
+      font-size: 19px;
+      margin: 20px 0;
+    }
+  }
+
+  &-title {
+    text-align: center;
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+
+  &-list { // candidates list
+    
+    &__item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      &__index { // candid index
+        font-size: 18px;
+      }
+      &__name { // candidate name
+        font-size: 18px;
+      }
+      &__score { // score
+        font-size: 18px;
+      }
+    }
+  }
+
+  &-button {
+    min-width: 150px;
+    height: 40px;
+    border: 2px solid #5b57cfe1;
+    color: #5b57cfe1;
+    padding: 0px 10px;
+    transition: .4s all;
+    &:hover {
+      background-color: #5b57cfe1;
+      color: #FFF;
+    }
+    &-vote { // button vote
+      margin-top: 10px;
+    }
+    &-showCandidate { // button show candidate
+      margin-bottom: 10px;
+    }
+  }
+  &-index { // input index to vote
+    border: 2px solid #5b57cfe1;
+    color: #5b57cfe1;
+    border-radius: 5px;
+    padding: 7px 10px;
+    margin-left: 10px;
+    &__wrap {
+
+    }
+  }
+
+  &-error {
+    color: #ce4848;
+  }
+}

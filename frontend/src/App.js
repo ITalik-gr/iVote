@@ -1,5 +1,6 @@
-import { Header } from "./components/Header";
-import { Vote } from "./components/Vote";
+import { Header } from "./components/Header/Header";
+import { Vote } from "./components/Vote/Vote";
+import { AboutUs } from "./components/AboutUs/AboutUs";
 import { MoralisProvider } from "react-moralis";
 
 function App() {
@@ -7,6 +8,7 @@ function App() {
     <MoralisProvider initializeOnMount={false}>
       <div className="App">
         <Header /> 
+        <AboutUs />
         <Vote />
       </div>
     </MoralisProvider>

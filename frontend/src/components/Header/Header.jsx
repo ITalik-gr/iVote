@@ -1,6 +1,7 @@
 import React from 'react';
 import { useEffect } from "react"
 import {useMoralis} from 'react-moralis';
+import './header.scss';
 // import {ConnectButton} from 'web3uikit'
 
 export function Header() {
@@ -31,8 +32,8 @@ export function Header() {
 
 
   return(
-    <>
-      <header class="w-full mt-5 text-gray-700 bg-white body-font">
+    <div className='h-screen header'>
+      <nav class="w-full text-gray-700 bg-white body-font">
           <div class="container flex flex-col items-start justify-between p-6 mx-auto md:flex-row">
               <a href='#_' class="flex items-center mb-4 font-medium text-gray-900 title-font md:mb-0">
                   <svg class="w-auto h-5 text-gray-900 fill-current" viewBox="0 0 202 69"
@@ -73,7 +74,16 @@ export function Header() {
                     )}
               </div>
           </div>
+      </nav>
+
+      <header className='flex h-full justify-center items-center flex-col'>
+        <h1 className=' mb-2 font-bold text-4xl'>
+            Secure and Transparent Voting Powered by Smart Contracts
+        </h1>
+        <h3 className=' text-xl'>
+            Ensuring secure and transparent voting through smart contracts.
+        </h3>
       </header>
-    </>
+    </div>
   )
 }
