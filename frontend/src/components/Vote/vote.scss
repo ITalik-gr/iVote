@@ -59,14 +59,18 @@
     }
   }
   &-index { // input index to vote
+    
+    &__wrap {
+
+    }
+  }
+
+  &-input {
     border: 2px solid #5b57cfe1;
     color: #5b57cfe1;
     border-radius: 5px;
     padding: 7px 10px;
     margin-left: 10px;
-    &__wrap {
-
-    }
   }
 
   &-error {
