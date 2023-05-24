@@ -15,7 +15,6 @@ export function Header() {
             window.localStorage.getItem("connected")
         ) {
             enableWeb3()
-            // enableWeb3({provider: window.localStorage.getItem("connected")}) // add walletconnect
         }
     }, [isWeb3Enabled])
 
@@ -56,14 +55,9 @@ export function Header() {
                     ) : (
                         <button
                             onClick={async () => {
-                                // await walletModal.connect()
                                 const ret = await enableWeb3()
-                                if (typeof ret !== "undefined") {
-                                    // depends on what button they picked
-                                    if (typeof window !== "undefined") {
-                                        window.localStorage.setItem("connected", "injected")
-                                        // window.localStorage.setItem("connected", "walletconnect")
-                                    }
+                                if (typeof ret !== "undefined" && typeof window !== "undefined") {
+                                    window.localStorage.setItem("connected", "injected")
                                 }
                             }}
                             disabled={isWeb3EnableLoading}

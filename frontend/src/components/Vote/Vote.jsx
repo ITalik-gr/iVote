@@ -2,27 +2,25 @@ import { useMoralis, useWeb3Contract } from "react-moralis";
 import { abi } from "../../constants/abi";
 import { useState, useEffect } from "react";
 import './vote.scss';
-import { assert } from "console";
 
 export function Vote() {
-  const CONTRACT_ADDRESS =  "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-  // let newCandidate;
+  const { account } = useMoralis()
 
-  const showMembers = () => {
-    candWrap.innerHTML = candidates.map((item, i) => `
-    <li key=${i} class="vote-list__item">
-      <div class="vote-list__item__index">Index Score: ${i}</div> 
-      <div class="vote-list__item__name">
-        Name: ${item[0]} 
-      </div> 
-      <div class="vote-list__item__score">Score: ${item[1]}</div>
-    </li>
-  `).join('');
-  }
   const [voteNumber, setVoteNumber] = useState(""); // Стан для збереження введеного числа
   const [newCandidate, setNewCandidate] = useState(""); 
 
-  const { data, error, runContractFunction: vote, isFetching, isLoading } = useWeb3Contract({
+  //? Variables
+  const CONTRACT_ADDRESS =  "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+  // FIXME: Треба овнера брати з контракта
+  const OWNER = account;
+
+  let candidates = [];
+  let candWrap = document.querySelector('.vote-list');
+  let leftTimeBlock = document.querySelector('.vote-left-time__timer');
+  let voteError = document.querySelector('.vote-error');
+  
+  //? Contract Functions
+  const { runContractFunction: vote } = useWeb3Contract({
     abi: abi,
     contractAddress: CONTRACT_ADDRESS, // your contract address here
     functionName: "vote",
@@ -30,7 +28,6 @@ export function Vote() {
       _index: voteNumber,
     },
   });
-
   const {runContractFunction: showCandidates} = useWeb3Contract({
     abi: abi,
     contractAddress: CONTRACT_ADDRESS, // your contract address here
@@ -44,6 +41,7 @@ export function Vote() {
     functionName: "showLeftTime",
     params: {},
   });
+
   const {runContractFunction: addCandidate} = useWeb3Contract({
     abi: abi,
     contractAddress: CONTRACT_ADDRESS, // your contract address here
@@ -53,10 +51,30 @@ export function Vote() {
     },
   });
 
-  let candidates = [];
-  let candWrap = document.querySelector('.vote-list');
-  let leftTimeBlock = document.querySelector('.vote-left-time__timer');
-  let voteError = document.querySelector('.vote-error');
+  const {runContractFunction: owner} = useWeb3Contract({
+    abi: abi,
+    contractAddress: CONTRACT_ADDRESS, // your contract address here
+    functionName: "i_owner",
+    params: {},
+  });
+
+  //? Use States, Use Efect
+
+
+
+  //? Functions
+
+  const showMembers = () => {
+    candWrap.innerHTML = candidates.map((item, i) => `
+      <li key=${i} class="vote-list__item">
+        <div class="vote-list__item__index">Index Score: ${i}</div> 
+        <div class="vote-list__item__name">
+          Name: ${item[0]} 
+        </div> 
+        <div class="vote-list__item__score">Score: ${item[1]}</div>
+      </li>
+  `).join('');
+  }
 
 
   const leftTime = async () => {
@@ -66,17 +84,25 @@ export function Vote() {
       ${result}
     `
   } 
-
+  // Add new candidate to list
   const addNewCandidate = async () => {
     await addCandidate();
     await handleShowCandidates();
   }
+
   const handleShowCandidates = async () => {
     const result = await showCandidates();
     candidates = result;
     console.log(candidates)
     showMembers();
   };
+
+
+// Deb func
+const showOwner = async () => {
+  console.log(OWNER);
+}
+
   
   return (
   <div className="vote">
@@ -84,6 +110,11 @@ export function Vote() {
       <h2 className="vote-title">Voting</h2>
 
       <div className="vote-nav">
+
+        <button className="vote-button"
+                onClick={async () => showOwner()}>
+          SHOW
+        </button>
 
         <button className="vote-button vote-button-showCandidate" 
                 onClick={handleShowCandidates}>
@@ -117,22 +148,19 @@ export function Vote() {
           Left Time: <span className="vote-left-time__timer"></span>m
         </div>
 
-        <div className="vote-add">
-          <button className="vote-button"
-                  onClick={async () => addNewCandidate({
-                    onError: (error) => voteError.innerHTML = `${error}`
-                  })}
-                  >Add new Candidate</button>
-          <input value={newCandidate}
-                placeholder="New Candidate"
-                onChange={(e) => setNewCandidate(e.target.value)} 
-                className="vote-input vote-add" 
-                type="text"
-                id="vote-index"/>
-            
-        </div>
-          
-
+            <div className="vote-add">
+              <button className="vote-button"
+                      onClick={async () => addNewCandidate({
+                        onError: (error) => voteError.innerHTML = `${error}`
+                      })}
+                      >Add new Candidate</button>
+              <input value={newCandidate}
+                    placeholder="New Candidate"
+                    onChange={(e) => setNewCandidate(e.target.value)} 
+                    className="vote-input vote-add" 
+                    type="text"
+                    id="vote-index"/>
+            </div>
 
         <div className="vote-error"></div>
       </div>
