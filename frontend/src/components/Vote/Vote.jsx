@@ -4,30 +4,37 @@ import { useState, useEffect } from "react";
 import './vote.scss';
 
 export function Vote() {
-  const { account } = useMoralis()
+  const { account, isWeb3Enabled } = useMoralis()
 
   const [voteNumber, setVoteNumber] = useState(""); // Стан для збереження введеного числа
   const [newCandidate, setNewCandidate] = useState(""); 
+  // const [candidates, setCandidates] = useState([]); 
 
   //? Variables
   const CONTRACT_ADDRESS =  "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   // FIXME: Треба овнера брати з контракта
+  let candidates = [['Vitalii', 0]];
   const OWNER = account;
-
-  let candidates = [];
-  let candWrap = document.querySelector('.vote-list');
-  let leftTimeBlock = document.querySelector('.vote-left-time__timer');
   let voteError = document.querySelector('.vote-error');
-  
+
   //? Contract Functions
-  const { runContractFunction: vote } = useWeb3Contract({
+  const { runContractFunction: vote, isFetching: voteIsFetching } = useWeb3Contract({
     abi: abi,
     contractAddress: CONTRACT_ADDRESS, // your contract address here
     functionName: "vote",
     params: {
       _index: voteNumber,
     },
+    onSuccess: () => {
+      // Оновлення інтерфейсу після успішного виконання транзакції
+      console.log("Транзакція успішна.");
+    },
+    onComplete: () => {
+      // Виконання дій після завершення транзакції
+      console.log("Транзакція завершена.");
+    },
   });
+
   const {runContractFunction: showCandidates} = useWeb3Contract({
     abi: abi,
     contractAddress: CONTRACT_ADDRESS, // your contract address here
@@ -58,20 +65,34 @@ export function Vote() {
     params: {},
   });
 
-  //? Use States, Use Efect
 
 
 
   //? Functions
 
-  const showMembers = () => {
+
+// const handleShowCandidates = async () => {
+//   const result = await showCandidates();
+//   setCandidates(result);
+//   console.log(result)
+//   showMembers();
+// };
+
+  const showMembers = async () => {
+    let candWrap = document.querySelector('.vote-list');
+
+    const result = await showCandidates();
+    console.log(result)
+    candidates = result;
+    console.log(candidates)
+    console.log(candWrap)
     candWrap.innerHTML = candidates.map((item, i) => `
       <li key=${i} class="vote-list__item">
         <div class="vote-list__item__index">Index Score: ${i}</div> 
         <div class="vote-list__item__name">
           Name: ${item[0]} 
         </div> 
-        <div class="vote-list__item__score">Score: ${item[1]}</div>
+        <div class="vote-list__item__score">Score: ${item[1].toString()}</div>
       </li>
   `).join('');
   }
@@ -79,7 +100,8 @@ export function Vote() {
 
   const leftTime = async () => {
     let result = await showLeftTime();
-    console.log(result.toString())
+    // console.log(result.toString())
+    const leftTimeBlock = document.querySelector('.vote-left-time__timer');
     leftTimeBlock.innerHTML = `
       ${result}
     `
@@ -87,21 +109,36 @@ export function Vote() {
   // Add new candidate to list
   const addNewCandidate = async () => {
     await addCandidate();
-    await handleShowCandidates();
   }
 
-  const handleShowCandidates = async () => {
-    const result = await showCandidates();
-    candidates = result;
-    console.log(candidates)
-    showMembers();
-  };
 
+  
 
 // Deb func
 const showOwner = async () => {
   console.log(OWNER);
 }
+
+
+  //? Use States, Use Efect
+  
+  useEffect(() => {
+    async function updateUI() {
+      // Оновлення інтерфейсу
+      console.log('Updating...')
+
+      await leftTime();
+      await showMembers();
+    }
+    const timer = setTimeout(() => {
+      if (!voteIsFetching) {
+        updateUI();
+      }
+    }, 3000); 
+    
+
+    return () => clearTimeout(timer);
+  }, [isWeb3Enabled ,voteIsFetching]);
 
   
   return (
@@ -117,7 +154,7 @@ const showOwner = async () => {
         </button>
 
         <button className="vote-button vote-button-showCandidate" 
-                onClick={handleShowCandidates}>
+                onClick={showMembers}>
           Show all available candidates
         </button>
 
