@@ -119,22 +119,23 @@ const showOwner = async () => {
   console.log(OWNER);
 }
 
+async function updateUI() {
+  // Оновлення інтерфейсу
+  console.log('Updating...')
+
+  await leftTime();
+  await showMembers();
+}
 
   //? Use States, Use Efect
   
   useEffect(() => {
-    async function updateUI() {
-      // Оновлення інтерфейсу
-      console.log('Updating...')
 
-      await leftTime();
-      await showMembers();
-    }
     const timer = setTimeout(() => {
       if (!voteIsFetching) {
         updateUI();
       }
-    }, 3000); 
+    }, 5000); 
     
 
     return () => clearTimeout(timer);
@@ -154,7 +155,9 @@ const showOwner = async () => {
         </button>
 
         <button className="vote-button vote-button-showCandidate" 
-                onClick={showMembers}>
+                onClick={async () => await showMembers({
+                  onSuccess: console.log("YEEES")
+                })}>
           Show all available candidates
         </button>
 
@@ -171,7 +174,11 @@ const showOwner = async () => {
 
         <button onClick={ async () => await 
           vote({
-            onError: (error) => voteError.innerHTML = `${error.message}`
+            onError: (error) => voteError.innerHTML = `${error.message}`,
+            onSuccess: updateUI,
+            onComplete: () => {
+              console.log("Транзакція завершена.");
+            },
           })} 
             className="vote-button vote-button-vote">
             Vote

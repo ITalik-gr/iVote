@@ -44,9 +44,9 @@ contract Voting {
         if(block.timestamp >= endVoting) {
             revert Voting_is_over();
         }
-        if(voters[msg.sender] == true) {
-            revert You_have_already_voted();
-        }
+        // if(voters[msg.sender] == true) {
+        //     revert You_have_already_voted();
+        // }
         voters[msg.sender] = true;
         candidates[_index].vote++;
     }

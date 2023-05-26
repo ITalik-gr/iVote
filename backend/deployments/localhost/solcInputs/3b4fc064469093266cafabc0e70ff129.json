@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/Voting.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.7;\n\n\nerror Voting_is_over();\nerror You_have_already_voted();\n\ncontract Voting {\n\n    event Voting__endVoting(uint endVoting);\n\n    modifier onlyOwner {\n        require(msg.sender == i_owner);\n        _;\n    }\n\n    struct Candidate {\n        string name;\n        uint vote;\n    }\n\n    address public immutable i_owner;\n    mapping (address => bool) voters;\n    Candidate[] public candidates;\n    uint public startVoting;\n    uint public endVoting;\n\n    constructor(string[] memory _candidateName, uint _votingTime) {\n        require(_candidateName.length > 1, \"2 or more candidates are required\");\n        startVoting = block.timestamp;\n        endVoting = block.timestamp + (_votingTime * 1 minutes);\n        i_owner = msg.sender;\n\n        for(uint i = 0; i < _candidateName.length; i++) {\n            candidates.push(Candidate({\n                name: _candidateName[i],\n                vote: 0\n            }));    \n        }\n        emit Voting__endVoting(endVoting / 60);\n    }\n\n    function vote(uint _index) public {\n        if(block.timestamp >= endVoting) {\n            revert Voting_is_over();\n        }\n        // if(voters[msg.sender] == true) {\n        //     revert You_have_already_voted();\n        // }\n        voters[msg.sender] = true;\n        candidates[_index].vote++;\n    }\n\n    function addCandidate(string memory _name) public onlyOwner {\n        if(block.timestamp >= endVoting) {\n            revert Voting_is_over();\n        }\n        candidates.push(Candidate({\n            name: _name,\n            vote: 0\n        }));\n    }\n\n    function showCandidates() public view returns (Candidate[] memory) {\n        return candidates;\n    }\n\n    function showLeftTime() public view returns(uint) {\n        return (endVoting - block.timestamp) / 60;\n    }\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

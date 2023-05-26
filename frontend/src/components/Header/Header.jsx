@@ -1,6 +1,7 @@
 import React from 'react';
 import { useEffect } from "react"
 import {useMoralis} from 'react-moralis';
+// import { ethers, providers } from 'ethers';
 import './header.scss';
 // import {ConnectButton} from 'web3uikit'
 
@@ -28,6 +29,25 @@ export function Header() {
           }
       })
   }, [])
+
+// Отримання додаткової інформації про MetaMask
+// const provider = new ethers.providers.Web3Provider(window.ethereum);
+// const signer = provider.getSigner();
+
+// const connectToMetaMask = async () => {
+//     try {
+//         // Запит на підключення до MetaMask
+//         await window.ethereum.enable();
+
+//         // Отримання адреси поточного облікового запису MetaMask
+//         const address = await signer.getAddress();
+
+//         console.log('Підключено до MetaMask');
+//         console.log('Адреса облікового запису:', address);
+//     } catch (error) {
+//         console.error('Помилка підключення до MetaMask:', error);
+//     }
+//   };
 
 
   return(
