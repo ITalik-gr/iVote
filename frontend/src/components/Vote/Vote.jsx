@@ -2,18 +2,18 @@ import { useMoralis, useWeb3Contract } from "react-moralis";
 import { abi } from "../../constants/abi";
 import { useState, useEffect } from "react";
 import './vote.scss';
+// const { ethers } = require('ethers');
 
 export function Vote() {
   const { account, isWeb3Enabled } = useMoralis()
 
   const [voteNumber, setVoteNumber] = useState(""); // Стан для збереження введеного числа
   const [newCandidate, setNewCandidate] = useState(""); 
-  // const [candidates, setCandidates] = useState([]); 
+  const [candidates, setCandidates] = useState([]); 
 
   //? Variables
-  const CONTRACT_ADDRESS =  "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+  const CONTRACT_ADDRESS =  "0xCCD431701e157813a02A40E52297c7042277abFd";
   // FIXME: Треба овнера брати з контракта
-  let candidates = [['Vitalii', 0]];
   const OWNER = account;
   let voteError = document.querySelector('.vote-error');
 
@@ -83,7 +83,7 @@ export function Vote() {
 
     const result = await showCandidates();
     console.log(result)
-    candidates = result;
+    setCandidates(result);
     console.log(candidates)
     console.log(candWrap)
     candWrap.innerHTML = candidates.map((item, i) => `
@@ -122,26 +122,37 @@ const showOwner = async () => {
 async function updateUI() {
   // Оновлення інтерфейсу
   console.log('Updating...')
-
   await leftTime();
   await showMembers();
 }
 
   //? Use States, Use Efect
-  
+
   useEffect(() => {
-
-    const timer = setTimeout(() => {
-      if (!voteIsFetching) {
-        updateUI();
-      }
-    }, 5000); 
-    
-
-    return () => clearTimeout(timer);
+    if(account !== null) {
+      updateUI();
+    }
   }, [isWeb3Enabled ,voteIsFetching]);
 
-  
+//! СЛУХАТЬ
+
+  // Підключення до блокчейну Sepolia через Alchemy
+  // const provider = new ethers.providers.JsonRpcProvider('https://eth-sepolia.g.alchemy.com/v2/EAVn0eVr4ydxmX4Hn5NLVDgUteRV7wWx');
+
+  // // Створення екземпляра смарт контракту
+  // const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
+
+  // // Функція оновлення UI
+  // function updateUI(event) {        
+  //   // Отримання даних з івенту та оновлення UI
+  //   console.log('Event received:', event.args);
+  //   // Виконайте необхідні дії для оновлення вашого UI з отриманими даними
+  // }
+
+  // // Слухати івенти з смарт контракту
+  // contract.on('YourEventName', updateUI);
+
+
   return (
   <div className="vote">
     <div className="container mx-auto">
@@ -151,7 +162,7 @@ async function updateUI() {
 
         <button className="vote-button"
                 onClick={async () => showOwner()}>
-          SHOW
+          SHOW 
         </button>
 
         <button className="vote-button vote-button-showCandidate" 
@@ -175,7 +186,7 @@ async function updateUI() {
         <button onClick={ async () => await 
           vote({
             onError: (error) => voteError.innerHTML = `${error.message}`,
-            onSuccess: updateUI,
+            onSuccess: async () => await updateUI(),
             onComplete: () => {
               console.log("Транзакція завершена.");
             },

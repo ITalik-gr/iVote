@@ -8,6 +8,7 @@ error You_have_already_voted();
 contract Voting {
 
     event Voting__endVoting(uint endVoting);
+    event Voting__userVote(uint _index, address _voter);
 
     modifier onlyOwner {
         require(msg.sender == i_owner);
@@ -44,11 +45,13 @@ contract Voting {
         if(block.timestamp >= endVoting) {
             revert Voting_is_over();
         }
-        // if(voters[msg.sender] == true) {
-        //     revert You_have_already_voted();
-        // }
+        if(voters[msg.sender] == true) {
+            revert You_have_already_voted();
+        }
         voters[msg.sender] = true;
         candidates[_index].vote++;
+
+        emit Voting__userVote(_index, msg.sender);
     }
 
     function addCandidate(string memory _name) public onlyOwner {

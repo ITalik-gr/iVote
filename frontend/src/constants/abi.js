@@ -40,6 +40,25 @@ module.exports = {
       "type": "event"
     },
     {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_voter",
+          "type": "address"
+        }
+      ],
+      "name": "Voting__userVote",
+      "type": "event"
+    },
+    {
       "inputs": [
         {
           "internalType": "string",
